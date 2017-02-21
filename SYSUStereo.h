@@ -1,13 +1,18 @@
-#include "cv.h"
-#include "highgui.h"
-
-using namespace cv;
-
 #ifdef DllDemoAPI
 #else
 #define DllDemoAPI _declspec(dllimport)
 
+//extern"C"{
+//DllDemoAPI bool _stdcall disp2Color(uint8_t* disp ,uint8_t* disparityColor,int width,int heigh, int maxdisp);
+//DllDemoAPI int _stdcall subtract(int a, int b);
+//DllDemoAPI int _stdcall multiple(int a, int b);
+//}
 #endif
+
+#include "cv.hpp"
+#include "highgui.hpp"
+
+using namespace cv;
 
 struct StereoParam
 {
@@ -26,4 +31,3 @@ public:
 	StereoParam param;
 	bool process(Mat left, Mat right);
 };
-

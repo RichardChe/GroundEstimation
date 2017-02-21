@@ -1,6 +1,11 @@
 #define DllDemoAPI _declspec(dllexport)
+
+
 #include "SYSUStereo.h"
-#include <cstdio>
+
+using namespace cv;
+
+Ptr<StereoSGBM> sgbm;
 
 DllDemoAPI SYSUStereo::SYSUStereo(StereoParam _param)
 {
@@ -8,32 +13,27 @@ DllDemoAPI SYSUStereo::SYSUStereo(StereoParam _param)
 	param.p1 = _param.p1;
 	param.p2 = _param.p2;
 	param.win_size = _param.win_size;
+	param.pre_filter_cap = _param.pre_filter_cap;
+
+	int uniquenessRatio = 5;
+
+	sgbm = StereoSGBM::create(0, param.max_disp, param.win_size, param.p1, param.p2, 0, 
+		                         param.pre_filter_cap, uniquenessRatio, 0, 0, StereoSGBM::MODE_HH);
 }
 
-DllDemoAPI bool SYSUStereo::process( Mat left,  Mat right)
+DllDemoAPI bool SYSUStereo::process(Mat left, Mat right)
 {
+	resize(left, left, Size(left.cols / 2, left.rows / 2));
+	resize(right, right, Size(right.cols / 2, right.rows / 2));
+	
+	Mat disp16s;
+	sgbm->compute(left, right, disp16s);
 
-	resize(left,left,Size(left.cols/2,left.rows/2));
-	resize(right,right,Size(right.cols/2,right.rows/2));
+	disp16s = disp16s / 16;
+	disp16s.convertTo(disp, CV_8UC1);
 
-	Mat disp_16s;
-	int mindisparity = 0;
-	int numDisparities = param.max_disp;
-	int SADWindowSize = param.win_size;
-	int P1 = param.p1;
-	int P2 = param.p2;
-	int preFilterCap = param.pre_filter_cap;
-
-	StereoSGBM stereosgbm(mindisparity,numDisparities,SADWindowSize,P1,P2,0,preFilterCap);
-	stereosgbm.fullDP = true;
-
-	stereosgbm(left,right,disp_16s);
-
-	disp_16s = disp_16s/16;
-	disp_16s.convertTo(disp,CV_8UC1);
-
-	resize(disp,disp,Size(right.cols*2,right.rows*2));
-	disp = disp*2;
+	resize(disp, disp, Size(disp.cols * 2, disp.rows * 2));
+	disp = disp * 2;
 
 	return true;
 }
