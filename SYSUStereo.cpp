@@ -1,31 +1,23 @@
-#define DllDemoAPI _declspec(dllexport)
-
-
 #include "SYSUStereo.h"
 
 using namespace cv;
 
 Ptr<StereoSGBM> sgbm;
 
-DllDemoAPI SYSUStereo::SYSUStereo(StereoParam _param)
+SYSUStereo::SYSUStereo(StereoParam _param)
+	:param(_param.mMaxDisp, _param.mP1, _param.mP2, _param.mWinSize, _param.mPreFilterCap)
 {
-	param.max_disp = _param.max_disp;
-	param.p1 = _param.p1;
-	param.p2 = _param.p2;
-	param.win_size = _param.win_size;
-	param.pre_filter_cap = _param.pre_filter_cap;
-
 	int uniquenessRatio = 5;
 
-	sgbm = StereoSGBM::create(0, param.max_disp, param.win_size, param.p1, param.p2, 0, 
-		                         param.pre_filter_cap, uniquenessRatio, 0, 0, StereoSGBM::MODE_HH);
+	sgbm = StereoSGBM::create(0, param.mMaxDisp, param.mWinSize, param.mP1, param.mP2, 0,
+		                         param.mPreFilterCap, uniquenessRatio, 0, 0, StereoSGBM::MODE_HH);
 }
 
-DllDemoAPI bool SYSUStereo::process(Mat left, Mat right)
+bool SYSUStereo::process(Mat left, Mat right)
 {
 	resize(left, left, Size(left.cols / 2, left.rows / 2));
 	resize(right, right, Size(right.cols / 2, right.rows / 2));
-	
+
 	Mat disp16s;
 	sgbm->compute(left, right, disp16s);
 

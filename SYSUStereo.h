@@ -1,32 +1,28 @@
-#ifdef DllDemoAPI
-#else
-#define DllDemoAPI _declspec(dllimport)
-
-//extern"C"{
-//DllDemoAPI bool _stdcall disp2Color(uint8_t* disp ,uint8_t* disparityColor,int width,int heigh, int maxdisp);
-//DllDemoAPI int _stdcall subtract(int a, int b);
-//DllDemoAPI int _stdcall multiple(int a, int b);
-//}
-#endif
-
-#include "cv.hpp"
-#include "highgui.hpp"
+#include <opencv2/opencv.hpp>
 
 using namespace cv;
 
 struct StereoParam
 {
-	int max_disp;
-	int p1;
-	int p2;
-	int win_size;
-	int pre_filter_cap;
+	int mMaxDisp;
+	int mP1;
+	int mP2;
+	int mWinSize;
+	int mPreFilterCap;
+	StereoParam(int maxDisp, int P1 ,int P2, int winSize, int preFilterCap)
+	{
+		mMaxDisp = maxDisp;
+		mP1 = P1;
+		mP2 = P2;
+		mWinSize = winSize;
+		mPreFilterCap = preFilterCap;
+	}
 };
 
-class DllDemoAPI SYSUStereo
+class SYSUStereo
 {
 public:
-	SYSUStereo(StereoParam);
+	SYSUStereo(StereoParam _param);
 	Mat disp;
 	StereoParam param;
 	bool process(Mat left, Mat right);
