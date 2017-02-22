@@ -17,6 +17,14 @@ struct StereoParam
 		mWinSize = winSize;
 		mPreFilterCap = preFilterCap;
 	}
+	StereoParam()
+	{
+		mMaxDisp = 64;
+		mP1 = 100;
+		mP2 = 2700;
+		mWinSize = 4;
+		mPreFilterCap = 180;
+	}
 };
 
 class SYSUStereo
