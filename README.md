@@ -1,5 +1,5 @@
 # GroundEstimation
-
+![image](./cover.png)
 ## Description 
 C++ code for ground(traversable) region estimation using stereo images.
 
